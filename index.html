@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>با هم گوش بدیم</title>
+<style>
+:root{--bg:#16181d;--card:#20232b;--line:#2f333d;--text:#f1efe9;--muted:#9a9ea8;--accent:#ffb347}
+@media (prefers-color-scheme: light){:root{--bg:#f5f3ee;--card:#fff;--line:#ddd9cf;--text:#1d1f24;--muted:#6b6f78;--accent:#d97a00}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--text);font-family:Vazirmatn,Tahoma,system-ui,sans-serif;display:flex;justify-content:center}
+main{width:100%;max-width:480px;padding:24px 18px;display:flex;flex-direction:column;gap:14px}
+h1{font-size:1.5rem;margin:8px 0 4px}
+p{color:var(--muted);margin:0;line-height:1.7}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:14px 16px}
+button.main{background:var(--accent);color:#1b1306;border-color:var(--accent);font-weight:700}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input[type=text]{font:inherit;width:100%;padding:14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);text-align:center;letter-spacing:.3em;font-size:1.4rem;direction:ltr}
+.code{font-size:2.6rem;letter-spacing:.35em;text-align:center;direction:ltr;padding:18px;background:var(--card);border:1px dashed var(--accent);border-radius:14px;font-weight:700}
+.hidden{display:none!important}
+#list{display:flex;flex-direction:column;gap:6px;max-height:42vh;overflow:auto;padding:0;margin:0;list-style:none}
+#list li{display:flex;justify-content:space-between;gap:10px;padding:12px;border-radius:10px;background:var(--card);border:1px solid var(--line);cursor:pointer}
+#list li.on{border-color:var(--accent)}
+#list small{color:var(--muted);white-space:nowrap}
+.controls{display:flex;gap:10px;justify-content:center}
+.controls button{min-width:64px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.row{display:flex;justify-content:space-between;color:var(--muted);font-size:.85rem;direction:ltr}
+#now{font-weight:700;min-height:1.6em}
+#status{color:var(--muted);font-size:.9rem;min-height:1.4em}
+</style>
+</head>
+<body>
+<main>
+  <section id="home">
+    <h1>با هم گوش بدیم</h1>
+    <p>آهنگ‌های هر دو نفر توی یه پلی‌لیست، پخش همزمان.</p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px">
+      <button class="main" id="btnMake">گرفتن کد</button>
+      <button id="btnEnter">وارد کردن کد</button>
+    </div>
+  </section>
+
+  <section id="make" class="hidden">
+    <h1>کد تو</h1>
+    <div class="code" id="myCode">…</div>
+    <p style="margin-top:12px">این کد رو به دوستت بده و این صفحه رو باز نگه دار. به محض وصل شدن، پلیر باز می‌شه.</p>
+  </section>
+
+  <section id="join" class="hidden">
+    <h1>وارد کردن کد</h1>
+    <input type="text" id="codeIn" maxlength="6" inputmode="numeric" placeholder="______" autocomplete="off">
+    <button class="main" id="btnGo" style="margin-top:12px;width:100%">وصل شو</button>
+  </section>
+
+  <div id="status"></div>
+
+  <section id="player" class="hidden">
+    <button class="main" id="btnAdd">انتخاب آهنگ‌های گوشی من</button>
+    <input type="file" id="files" accept="audio/*" multiple class="hidden">
+    <ul id="list"></ul>
+    <div id="now">آهنگی انتخاب نشده</div>
+    <input type="range" id="seek" min="0" max="100" value="0" step="0.1">
+    <div class="row"><span id="tNow">0:00</span><span id="tAll">0:00</span></div>
+    <div class="controls">
+      <button id="prev" aria-label="قبلی">⏮</button>
+      <button class="main" id="pp" aria-label="پخش/توقف">▶</button>
+      <button id="next" aria-label="بعدی">⏭</button>
+    </div>
+    <audio id="a" preload="auto"></audio>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const a = $('a');
+const PREFIX = 'together-music-';
+let peer, conn, isHost = false, cur = null;
+const me = () => isHost ? 'h' : 'g';
+const tracks = [];            // {id,name,owner}
+const localFiles = new Map(); // id -> File
+const blobUrls = new Map();   // id -> url
+const inbox = {};             // incoming transfers
+const sent = new Set();
+let n = 0;
+
+const show = id => ['home','make','join','player'].forEach(s => $(s).classList.toggle('hidden', s !== id));
+const status = t => $('status').textContent = t || '';
+const send = m => { if (conn && conn.open) conn.send(m); };
+const fmt = s => isFinite(s) ? Math.floor(s/60) + ':' + String(Math.floor(s%60)).padStart(2,'0') : '0:00';
+
+/* ---------- اتصال ---------- */
+$('btnMake').onclick = () => { isHost = true; show('make'); startHost(); };
+$('btnEnter').onclick = () => { show('join'); $('codeIn').focus(); };
+
+function startHost(){
+  const code = String(Math.floor(100000 + Math.random()*900000));
+  peer = new Peer(PREFIX + code);
+  peer.on('open', () => $('myCode').textContent = code);
+  peer.on('error', e => {
+    if (e.type === 'unavailable-id') startHost();
+    else status('خطا در اتصال: ' + e.type);
+  });
+  peer.on('connection', c => { conn = c; bind(); });
+}
+
+$('btnGo').onclick = () => {
+  const code = $('codeIn').value.trim();
+  if (code.length < 6) return status('کد ۶ رقمیه.');
+  status('در حال اتصال…');
+  peer = new Peer();
+  peer.on('open', () => { conn = peer.connect(PREFIX + code, {reliable:true}); bind(); });
+  peer.on('error', e => status(e.type === 'peer-unavailable' ? 'این کد پیدا نشد.' : 'خطا در اتصال: ' + e.type));
+};
+
+function bind(){
+  conn.on('open', () => { status(''); show('player'); });
+  conn.on('data', onData);
+  conn.on('close', () => { status('ارتباط قطع شد.'); a.pause(); });
+}
+
+/* ---------- آهنگ‌ها ---------- */
+$('btnAdd').onclick = () => $('files').click();
+$('files').onchange = e => {
+  for (const f of e.target.files){
+    const id = me() + (n++);
+    localFiles.set(id, f);
+    blobUrls.set(id, URL.createObjectURL(f));
+    tracks.push({id, name: f.name.replace(/\.[^.]+$/, ''), owner: me()});
+  }
+  e.target.value = '';
+  render();
+  send({type:'tracks', list: tracks.filter(t => t.owner === me())});
+};
+
+function render(){
+  const sorted = [...tracks].sort((x,y) => (x.owner === 'h' ? 0 : 1) - (y.owner === 'h' ? 0 : 1));
+  tracks.length = 0; tracks.push(...sorted);
+  const ul = $('list'); ul.innerHTML = '';
+  tracks.forEach(t => {
+    const li = document.createElement('li');
+    if (t.id === cur) li.className = 'on';
+    const s = document.createElement('span'); s.textContent = t.name;
+    const w = document.createElement('small'); w.textContent = t.owner === me() ? 'من' : 'دوستم';
+    li.append(s, w);
+    li.onclick = () => select(t.id);
+    ul.appendChild(li);
+  });
+}
+
+/* ---------- انتخاب و انتقال فایل ---------- */
+function select(id){ send({type:'select', id}); handleSelect(id); }
+
+function handleSelect(id){
+  cur = id; a.pause(); render();
+  const t = tracks.find(x => x.id === id); if (!t) return;
+  $('now').textContent = t.name;
+  if (t.owner === me()){
+    a.src = blobUrls.get(id);
+    if (!sent.has(id)) { status('در حال فرستادن آهنگ به دوستت…'); sendFile(id); }
+    else status('منتظر آماده شدن دوستت…');
+  } else if (blobUrls.has(id)){
+    a.src = blobUrls.get(id); send({type:'ready', id});
+  } else status('در حال دریافت آهنگ…');
+  setMeta(t.name);
+}
+
+async function sendFile(id){
+  const f = localFiles.get(id), buf = await f.arrayBuffer(), CH = 16384;
+  send({type:'file-start', id, size: buf.byteLength, mime: f.type});
+  for (let i = 0; i < buf.byteLength; i += CH){
+    while (conn.dataChannel && conn.dataChannel.bufferedAmount > 1e6) await new Promise(r => setTimeout(r, 40));
+    send({type:'chunk', id, data: buf.slice(i, i + CH)});
+  }
+  send({type:'file-end', id}); sent.add(id);
+}
+
+function onData(m){
+  switch (m.type){
+    case 'tracks':
+      for (let i = tracks.length - 1; i >= 0; i--) if (tracks[i].owner !== me()) tracks.splice(i,1);
+      m.list.forEach(t => tracks.push(t)); render(); break;
+    case 'select': handleSelect(m.id); break;
+    case 'file-start': inbox[m.id] = {parts:[], got:0, size:m.size, mime:m.mime}; break;
+    case 'chunk': {
+      const b = inbox[m.id]; if (!b) break;
+      b.parts.push(m.data); b.got += m.data.byteLength;
+      if (m.id === cur) status('در حال دریافت… ' + Math.round(b.got / b.size * 100) + '٪');
+      break;
+    }
+    case 'file-end': {
+      const b = inbox[m.id]; if (!b) break;
+      blobUrls.set(m.id, URL.createObjectURL(new Blob(b.parts, {type: b.mime || 'audio/mpeg'})));
+      delete inbox[m.id];
+      if (m.id === cur){ a.src = blobUrls.get(m.id); status(''); send({type:'ready', id:m.id}); }
+      break;
+    }
+    case 'ready':
+      if (m.id === cur){ status(''); a.currentTime = 0; a.play(); send({type:'state', playing:true, time:0}); }
+      break;
+    case 'state':
+      a.currentTime = m.time;
+      m.playing ? a.play().catch(()=>{}) : a.pause();
+      break;
+  }
+}
+
+/* ---------- کنترل‌ها ---------- */
+function toggle(){
+  if (!cur || !a.src) return;
+  const playing = a.paused;
+  playing ? a.play() : a.pause();
+  send({type:'state', playing, time:a.currentTime});
+}
+function step(d){
+  if (!tracks.length) return;
+  const i = tracks.findIndex(t => t.id === cur);
+  select(tracks[(i + d + tracks.length) % tracks.length].id);
+}
+$('pp').onclick = toggle;
+$('next').onclick = () => step(1);
+$('prev').onclick = () => step(-1);
+let drag = false;
+$('seek').oninput = () => drag = true;
+$('seek').onchange = e => {
+  drag = false;
+  if (!a.duration) return;
+  a.currentTime = e.target.value / 100 * a.duration;
+  send({type:'state', playing:!a.paused, time:a.currentTime});
+};
+a.ontimeupdate = () => {
+  if (!drag && a.duration) $('seek').value = a.currentTime / a.duration * 100;
+  $('tNow').textContent = fmt(a.currentTime); $('tAll').textContent = fmt(a.duration);
+};
+a.onplay = () => $('pp').textContent = '⏸';
+a.onpause = () => $('pp').textContent = '▶';
+a.onended = () => { if (isHost) step(1); };
+
+/* کنترل از نوتیفیکیشن/قفل صفحه گوشی */
+function setMeta(title){
+  if (!('mediaSession' in navigator)) return;
+  navigator.mediaSession.metadata = new MediaMetadata({title, artist:'با هم گوش بدیم'});
+  navigator.mediaSession.setActionHandler('play', toggle);
+  navigator.mediaSession.setActionHandler('pause', toggle);
+  navigator.mediaSession.setActionHandler('nexttrack', () => step(1));
+  navigator.mediaSession.setActionHandler('previoustrack', () => step(-1));
+}
+</script>
+</body>
+</html>
