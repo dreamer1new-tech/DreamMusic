@@ -72,7 +72,21 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   </section>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script>
+window.peerReady=new Promise(res=>{
+  const srcs=['https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js','https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js','https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js'];
+  let i=0;
+  (function next(){
+    if(window.Peer) return res(true);
+    if(i>=srcs.length) return res(false);
+    const el=document.createElement('script');
+    el.src=srcs[i++];
+    el.onload=()=>window.Peer?res(true):next();
+    el.onerror=next;
+    document.head.appendChild(el);
+  })();
+});
+</script>
 <script>
 const $ = id => document.getElementById(id);
 const a = $('a');
@@ -95,10 +109,13 @@ const fmt = s => isFinite(s) ? Math.floor(s/60) + ':' + String(Math.floor(s%60))
 $('btnMake').onclick = () => { isHost = true; show('make'); startHost(); };
 $('btnEnter').onclick = () => { show('join'); $('codeIn').focus(); };
 
-function startHost(){
+async function startHost(){
+  status('در حال گرفتن کد…');
+  if (!(await window.peerReady)) return status('کتابخانه‌ی اتصال لود نشد. اینترنت یا VPN رو چک کن و صفحه رو رفرش کن.');
   const code = String(Math.floor(100000 + Math.random()*900000));
   peer = new Peer(PREFIX + code);
-  peer.on('open', () => $('myCode').textContent = code);
+  const t = setTimeout(() => status('سرور واسط جواب نمی‌ده (احتمالاً فیلتره). VPN رو روشن کن و صفحه رو رفرش کن.'), 12000);
+  peer.on('open', () => { clearTimeout(t); status(''); $('myCode').textContent = code; });
   peer.on('error', e => {
     if (e.type === 'unavailable-id') startHost();
     else status('خطا در اتصال: ' + e.type);
@@ -106,12 +123,14 @@ function startHost(){
   peer.on('connection', c => { conn = c; bind(); });
 }
 
-$('btnGo').onclick = () => {
+$('btnGo').onclick = async () => {
   const code = $('codeIn').value.trim();
   if (code.length < 6) return status('کد ۶ رقمیه.');
   status('در حال اتصال…');
+  if (!(await window.peerReady)) return status('کتابخانه‌ی اتصال لود نشد. اینترنت یا VPN رو چک کن و صفحه رو رفرش کن.');
   peer = new Peer();
-  peer.on('open', () => { conn = peer.connect(PREFIX + code, {reliable:true}); bind(); });
+  const t = setTimeout(() => status('وصل نشد. VPN هر دو نفر روشن باشه و دوباره امتحان کنید.'), 15000);
+  peer.on('open', () => { conn = peer.connect(PREFIX + code, {reliable:true}); conn.on('open', () => clearTimeout(t)); bind(); });
   peer.on('error', e => status(e.type === 'peer-unavailable' ? 'این کد پیدا نشد.' : 'خطا در اتصال: ' + e.type));
 };
 
