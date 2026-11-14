@@ -92,6 +92,10 @@ const $ = id => document.getElementById(id);
 const a = $('a');
 const PREFIX = 'together-music-';
 let peer, conn, isHost = false, cur = null;
+const ICE = {config:{iceServers:[
+  {urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'},
+  {urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turn:openrelay.metered.ca:443?transport=tcp'],username:'openrelayproject',credential:'openrelayproject'}
+]}};
 const me = () => isHost ? 'h' : 'g';
 const tracks = [];            // {id,name,owner}
 const localFiles = new Map(); // id -> File
@@ -113,7 +117,7 @@ async function startHost(){
   status('در حال گرفتن کد…');
   if (!(await window.peerReady)) return status('کتابخانه‌ی اتصال لود نشد. اینترنت یا VPN رو چک کن و صفحه رو رفرش کن.');
   const code = String(Math.floor(100000 + Math.random()*900000));
-  peer = new Peer(PREFIX + code);
+  peer = new Peer(PREFIX + code, ICE);
   const t = setTimeout(() => status('سرور واسط جواب نمی‌ده (احتمالاً فیلتره). VPN رو روشن کن و صفحه رو رفرش کن.'), 12000);
   peer.on('open', () => { clearTimeout(t); status(''); $('myCode').textContent = code; });
   peer.on('error', e => {
@@ -126,16 +130,29 @@ async function startHost(){
 $('btnGo').onclick = async () => {
   const code = $('codeIn').value.trim();
   if (code.length < 6) return status('کد ۶ رقمیه.');
-  status('در حال اتصال…');
+  status('مرحله ۱ از ۳: اتصال به سرور واسط…');
   if (!(await window.peerReady)) return status('کتابخانه‌ی اتصال لود نشد. اینترنت یا VPN رو چک کن و صفحه رو رفرش کن.');
-  peer = new Peer();
-  const t = setTimeout(() => status('وصل نشد. VPN هر دو نفر روشن باشه و دوباره امتحان کنید.'), 15000);
-  peer.on('open', () => { conn = peer.connect(PREFIX + code, {reliable:true}); conn.on('open', () => clearTimeout(t)); bind(); });
-  peer.on('error', e => status(e.type === 'peer-unavailable' ? 'این کد پیدا نشد.' : 'خطا در اتصال: ' + e.type));
+  let stage = 1;
+  if (peer) peer.destroy();
+  peer = new Peer(undefined, ICE);
+  const t = setTimeout(() => status(stage === 1
+    ? 'به سرور واسط وصل نشد (احتمالاً فیلتره). VPN رو روشن کن.'
+    : 'دوستت پیدا شد ولی اتصال مستقیم بین دو گوشی برقرار نشد (مشکل شبکه/فیلتر).'), 20000);
+  peer.on('open', () => {
+    stage = 2; status('مرحله ۲ از ۳: پیدا کردن دوستت…');
+    conn = peer.connect(PREFIX + code, {reliable:true});
+    conn.on('open', () => clearTimeout(t));
+    bind();
+  });
+  peer.on('error', e => {
+    clearTimeout(t);
+    status(e.type === 'peer-unavailable' ? 'این کد پیدا نشد. دوستت باید صفحه‌ی کد رو باز نگه داشته باشه (رفرش نکنه).' : 'خطا در اتصال: ' + e.type);
+  });
 };
 
 function bind(){
   conn.on('open', () => { status(''); show('player'); });
+  conn.on('error', e => status('خطا: ' + e.type));
   conn.on('data', onData);
   conn.on('close', () => { status('ارتباط قطع شد.'); a.pause(); });
 }
