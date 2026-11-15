@@ -14,7 +14,7 @@
 [data-theme=nature]{--bg:linear-gradient(180deg,#d6ebcb,#f3f1de 60%,#fffaf0);--ink:#2b4a33;--muted:#6f8b72;--ac:#6fae6e;--ac2:#c3e1a5;--line:rgba(90,140,90,.25);--sh:0 10px 30px rgba(80,130,80,.18)}
 [data-theme=rose]{--bg:linear-gradient(180deg,#ffd9e8,#ffeef5 55%,#fffafc);--ink:#5a2340;--muted:#b07a94;--ac:#ff6fa8;--ac2:#ffb3d1;--line:rgba(230,100,160,.25);--sh:0 10px 30px rgba(230,100,160,.2)}
 [data-theme=sunset]{--bg:linear-gradient(180deg,#ffe0c4,#fff1e0 55%,#fffaf3);--ink:#5a3414;--muted:#b08560;--ac:#ff8a3c;--ac2:#ffc078;--line:rgba(240,140,60,.28);--sh:0 10px 30px rgba(240,140,60,.2)}
-[data-theme=night]{--bg:linear-gradient(180deg,#1b1320,#120e18 60%,#0d0a12);--card:rgba(38,28,48,.8);--ink:#f7ecf3;--muted:#b79db3;--ac:#ff4f98;--ac2:#ff8fc2;--line:rgba(255,120,180,.25);--sh:0 10px 30px rgba(0,0,0,.45);--in:#2a2032;--btn:#33263d;--li:#2a2032;--lion:#3a2c47}
+[data-theme=mono]{--bg:linear-gradient(180deg,#1a1a1a,#0b0b0b);--card:rgba(30,30,30,.84);--ink:#f5f5f5;--muted:#9a9a9a;--ac:#f2f2f2;--ac2:#a8a8a8;--line:rgba(255,255,255,.16);--on:#111;--sh:0 10px 30px rgba(0,0,0,.5);--in:#262626;--btn:#2b2b2b;--li:#242424;--lion:#333}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%}
 body{background:var(--bg) fixed;color:var(--ink);font-family:Koodak,Homa,Vazirmatn,Tahoma,sans-serif;display:flex;justify-content:center;overflow-x:hidden;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
@@ -83,12 +83,12 @@ input[type=range]{width:100%;accent-color:var(--ac);margin:0}
 .controls .main{width:72px;height:72px}
 .controls svg{width:26px;height:26px}
 .chip{font-size:.8rem;color:var(--muted);line-height:1.7}
-#list{display:flex;flex-direction:column;gap:8px;max-height:230px;overflow:auto;padding:0;margin:0;list-style:none}
-#list li{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:var(--li);border:1px solid transparent;cursor:pointer;min-height:48px}
+#list,#favs{display:flex;flex-direction:column;gap:8px;max-height:230px;overflow:auto;padding:0;margin:0;list-style:none}
+#list li,#favs li{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:var(--li);border:1px solid transparent;cursor:pointer;min-height:48px}
 #list li.on{border-color:var(--ac);background:var(--lion)}
 #list i{font-style:normal;width:26px;height:26px;border-radius:50%;background:var(--ac2);color:var(--on);display:grid;place-items:center;font-size:.75rem;flex:none}
-#list span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#list small{color:var(--muted);font-size:.75rem}
+#list span,#favs span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#list small,#favs small{color:var(--muted);font-size:.75rem}
 .hd{display:flex;justify-content:space-between;align-items:baseline;font-weight:700}
 #msgs{display:flex;flex-direction:column;gap:8px;height:46vh;overflow:auto;padding:2px}
 .b{max-width:82%;padding:8px 12px;border-radius:16px;background:var(--li);align-self:flex-start;line-height:1.7;word-break:break-word}
@@ -109,6 +109,27 @@ footer{margin-top:auto;text-align:center;font-size:.72rem;color:var(--muted);opa
 #sw{direction:ltr;font-size:2.3rem;font-weight:700;display:flex;justify-content:center;font-family:system-ui,sans-serif;color:var(--ink)}
 #sw span{display:inline-block;opacity:0;animation:bn 1.1s cubic-bezier(.3,.7,.4,1) both}
 @keyframes bn{0%{opacity:0}20%{opacity:1;transform:translateY(-26px)}45%{transform:translateY(14px)}70%{transform:translateY(-6px)}100%{opacity:1;transform:none}}
+.emp{justify-content:center;color:var(--muted);cursor:default!important}
+.lb{min-height:34px;width:34px;padding:0;border:0;background:none;display:grid;place-items:center;color:var(--muted);flex:none}
+.lb svg,.tabs button svg{width:22px;height:22px}
+.hrt{fill:none;stroke:currentColor;stroke-width:2}.hrt.on{fill:#ef4444;stroke:#ef4444}
+.tabs #tbFav{flex:0 0 54px;display:grid;place-items:center}
+#dotc{font-style:normal;color:var(--ac);font-size:.7rem}
+#prog{display:flex;flex-direction:column;gap:6px;padding:12px;border-radius:16px;background:var(--li);border:1px solid var(--line)}
+.pt{display:flex;justify-content:space-between;font-size:.9rem;gap:8px}.pt span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar{height:8px;border-radius:8px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:8px;transition:width .2s}
+#prog.ind .bar i{width:40%!important;animation:ind 1.2s ease-in-out infinite alternate}
+@keyframes ind{from{margin-inline-start:0}to{margin-inline-start:60%}}
+#pSub{color:var(--muted);font-size:.78rem}
+#lyr{display:flex;align-items:center;justify-content:center;gap:8px}
+#lyr svg{width:20px;height:20px}
+#lyrB{white-space:pre-wrap;font:inherit;line-height:2;margin:0;text-align:center;max-height:52vh;overflow:auto}
+#lyrS{color:var(--muted);font-size:.75rem;text-align:center}
+.pph{display:flex;flex-direction:column;align-items:center;gap:10px}
+#pPrev{width:96px;height:96px;border-radius:28px;font-size:2.4rem;cursor:pointer}
+.ta{width:100%;min-height:96px;border-radius:14px;border:1px solid var(--line);background:var(--in);color:var(--ink);padding:10px;font:inherit;font-size:.72rem;direction:ltr;resize:none;word-break:break-all}
+#mS{min-height:1.2em;text-align:center}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}#sw span{opacity:1}}
 </style>
 </head>
@@ -128,10 +149,10 @@ footer{margin-top:auto;text-align:center;font-size:.72rem;color:var(--muted);opa
 <div id="status"></div>
 
 <section id="welcome" class="card hidden">
-  <h2>خوش اومدی 👋</h2>
-  <p>یه اسم و یه رنگ برای خودت انتخاب کن. نیازی به ثبت‌نام نیست و همه چیز روی همین گوشی ذخیره می‌مونه.</p>
-  <input type="text" id="pName" maxlength="16" placeholder="اسمت" autocomplete="off">
-  <div class="cols" id="pCols"></div>
+  <h2>خوش اومدی</h2>
+  <p>یه اسم و یه عکس برای پروفایلت انتخاب کن. نیازی به ثبت‌نام نیست و همه چیز روی همین گوشی ذخیره می‌مونه.</p>
+  <div class="pph"><div id="pPrev" role="button" tabindex="0" aria-label="انتخاب عکس پروفایل"></div><button type="button" id="pPick">انتخاب عکس</button><input type="file" id="pFile" accept="image/*" class="hidden"></div>
+  <input type="text" id="pName" maxlength="10" placeholder="اسمت" autocomplete="off">
   <button class="main" id="pOk">ادامه</button>
 </section>
 
@@ -147,8 +168,9 @@ footer{margin-top:auto;text-align:center;font-size:.72rem;color:var(--muted);opa
 <section id="newroom" class="hidden" style="display:flex;flex-direction:column;gap:16px">
   <div class="card">
     <h2>ساخت اتاق</h2>
-    <input type="text" id="rName" maxlength="20" placeholder="اسم اتاق">
+    <input type="text" id="rName" maxlength="14" placeholder="اسم اتاق">
     <div class="cols" id="rCols"></div>
+    <div class="tabs" id="seg"><button class="on" id="sgCode">با کد</button><button id="sgMan">دستی (بدون سرور)</button></div>
     <button class="main" id="mkRoom">ساختن و ورود</button>
     <p>بعد از ساخت، «کد اتاق» بالای صفحه نوشته می‌شه. اون رو به دوستات بده (تا ۴ نفر).</p>
   </div>
@@ -156,6 +178,7 @@ footer{margin-top:auto;text-align:center;font-size:.72rem;color:var(--muted);opa
     <h2>ورود با کد</h2>
     <input type="text" class="code" id="codeIn" maxlength="6" inputmode="numeric" placeholder="······" autocomplete="off">
     <button class="main" id="goRoom">ورود به اتاق</button>
+    <button id="goMan">ورود با دعوت‌نامه (بدون سرور)</button>
   </div>
   <button class="ghost" id="nrBack">بازگشت</button>
 </section>
@@ -166,10 +189,11 @@ footer{margin-top:auto;text-align:center;font-size:.72rem;color:var(--muted);opa
       <button class="ic" id="rBack" aria-label="بازگشت"><svg class="st" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <div id="rAv"></div>
       <span id="rInfo" role="button" tabindex="0"><b id="rName2"></b><small id="rSub"></small></span>
+      <button class="ic hidden" id="addF" aria-label="افزودن دوست"><svg class="st" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
       <div id="mem"></div>
     </div>
   </div>
-  <div class="tabs"><button class="on" id="tbPlay">پخش</button><button id="tbChat">گفت‌وگو <i id="dotc" class="hidden">●</i></button></div>
+  <div class="tabs"><button class="on" id="tbPlay">پخش</button><button id="tbChat">گفت‌وگو <i id="dotc" class="hidden">●</i></button><button id="tbFav" aria-label="مورد علاقه‌ها"><svg class="hrt" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button></div>
 
   <div id="tPlay" style="display:flex;flex-direction:column;gap:14px">
     <div class="card">
@@ -179,6 +203,7 @@ footer{margin-top:auto;text-align:center;font-size:.72rem;color:var(--muted);opa
       </div>
       <div id="now">آهنگی انتخاب نشده</div>
       <div class="sub" id="sub">یه آهنگ از پلی‌لیست انتخاب کن</div>
+      <div id="prog" class="hidden"><div class="pt"><span id="pTxt"></span><b id="pPct"></b></div><div class="bar"><i id="pBar"></i></div><small id="pSub"></small></div>
       <input type="range" id="seek" min="0" max="100" value="0" step="0.1" aria-label="جلو و عقب">
       <div class="row"><span id="tNow">0:00</span><span id="tAll">0:00</span></div>
       <div class="controls">
@@ -186,7 +211,7 @@ footer{margin-top:auto;text-align:center;font-size:.72rem;color:var(--muted);opa
         <button class="main" id="pp" aria-label="پخش/توقف"></button>
         <button id="next" aria-label="بعدی"></button>
       </div>
-      <button class="ghost hidden" id="lyr">🔎 متن آهنگ</button>
+      <button class="ghost hidden" id="lyr"><svg class="st" viewBox="0 0 24 24"><path d="M4 6h10M4 11h6M4 16h5"/><circle cx="16" cy="14" r="3.5"/><path d="M18.6 16.6L21 19"/></svg>متن آهنگ</button>
     </div>
     <div class="card">
       <div class="hd"><span>پلی‌لیست مشترک</span><small class="chip" id="cnt"></small></div>
@@ -200,17 +225,28 @@ footer{margin-top:auto;text-align:center;font-size:.72rem;color:var(--muted);opa
     <div id="msgs"></div>
     <div class="send"><input type="text" id="cIn" maxlength="300" placeholder="پیام…" autocomplete="off"><button class="main" id="cSend" style="min-width:64px">ارسال</button></div>
   </div>
+<div id="tFav" class="card hidden"><div class="hd"><span>مورد علاقه‌ها</span><small class="chip" id="fcnt"></small></div><ul id="favs"></ul></div>
 </section>
 <footer>ساخته شده توسط Dreamer</footer>
 </main>
 
 <div id="help" class="modal hidden"><div class="sheet">
   <h2>راهنما</h2>
-  <details open><summary>طرز کار برنامه</summary><p>۱) اسم و رنگ پروفایلت رو انتخاب کن.<br>۲) از «اتاق جدید» یه اتاق بساز یا با کد وارد اتاق دوستت شو. اتاق‌ها توی صفحه‌ی اصلی ذخیره می‌مونن و دفعه‌ی بعد بدون کد وارد می‌شی.<br>۳) توی اتاق «افزودن آهنگ» رو بزن و آهنگ‌های گوشی‌ت رو انتخاب کن.<br>۴) هر آهنگی رو لمس کنی برای همه‌ی اعضا پخش می‌شه. توقف، جلو و عقب بردن برای همه اعمال می‌شه.<br>۵) توی تب «گفت‌وگو» با بقیه چت کن. هر اتاق حداکثر ۴ نفر ظرفیت داره.<br>۶) دکمه‌ی «متن آهنگ» اسم آهنگ رو توی گوگل جست‌وجو می‌کنه.</p></details>
-  <details><summary>نکته‌های مهم</summary><p>• برنامه مستقیم بین گوشی‌ها کار می‌کنه، پس سازنده‌ی اتاق باید برنامه رو باز داشته باشه تا بقیه وصل بشن.<br>• آهنگ‌ها روی گوشی خودت می‌مونن و موقع پخش برای بقیه فرستاده می‌شن. بعد از بستن برنامه باید دوباره انتخابشون کنی.<br>• برای انتخاب چند آهنگ، انگشتت رو روی اولین آهنگ نگه دار و بقیه رو لمس کن.</p></details>
+  <details open><summary>طرز کار برنامه</summary><p>۱) اسم و عکس پروفایلت رو انتخاب کن.<br>۲) از «اتاق جدید» یه اتاق بساز یا با کد وارد اتاق دوستت شو. اتاق‌ها توی صفحه‌ی اصلی ذخیره می‌مونن و دفعه‌ی بعد بدون کد وارد می‌شی.<br>۳) توی اتاق «افزودن آهنگ» رو بزن و آهنگ‌های گوشی‌ت رو انتخاب کن.<br>۴) هر آهنگی رو لمس کنی برای همه‌ی اعضا پخش می‌شه. توقف، جلو و عقب بردن برای همه اعمال می‌شه.<br>۵) توی تب «گفت‌وگو» با بقیه چت کن. هر اتاق حداکثر ۴ نفر ظرفیت داره.<br>۶) دکمه‌ی «متن آهنگ» متن رو از اینترنت پیدا می‌کنه (برای همه‌ی آهنگ‌ها موجود نیست).<br>۷) با قلب کنار هر آهنگ، اون رو به «مورد علاقه‌ها» اضافه کن (دکمه‌ی قلب کنار تب‌ها). با فلش پایین‌رو‌نده هم آهنگ روی گوشیت ذخیره می‌شه.</p></details>
+  <details><summary>نکته‌های مهم</summary><p>• برنامه مستقیم بین گوشی‌ها کار می‌کنه، پس سازنده‌ی اتاق باید برنامه رو باز داشته باشه تا بقیه وصل بشن.<br>• آهنگ‌هایی که اضافه می‌کنی داخل خود برنامه ذخیره می‌شن (یه کپی روی گوشی که فضا می‌گیره) و دفعه‌ی بعد خودشون میان. با آیکون سطل حذفشون کن. موقع پخش، آهنگ برای بقیه فرستاده می‌شه.<br>• برای انتخاب چند آهنگ، انگشتت رو روی اولین آهنگ نگه دار و بقیه رو لمس کن.</p></details>
+  <details><summary>حالت دستی (بدون سرور و وی‌پی‌ان)</summary><p>۱) موقع ساخت اتاق «دستی» رو انتخاب کن. توی اتاق دکمه‌ی + رو بزن تا یه متن دعوت‌نامه ساخته بشه.<br>۲) متن رو با هر پیام‌رسانی (ایتا، بله، پیامک…) برای دوستت بفرست.<br>۳) دوستت توی «اتاق جدید» گزینه‌ی «ورود با دعوت‌نامه» رو می‌زنه، متن رو می‌چسبونه و یه متن جواب می‌گیره.<br>۴) جواب رو برای تو می‌فرسته، تو توی همون پنجره می‌چسبونی و «اتصال» رو می‌زنی.<br>بهتره هر دو روی یه وای‌فای یا هات‌اسپات باشید. روی اینترنت موبایل‌های جدا ممکنه وصل نشه. اتاق دستی هر بار باید دوباره وصل بشه، ولی اتاق و چتش ذخیره می‌مونه.</p></details>
   <details><summary>رفع مشکلات رایج</summary><p>• <b>وصل نمی‌شه:</b> مطمئن شو سازنده‌ی اتاق آنلاینه و VPN روشنه. برنامه خودش دوباره تلاش می‌کنه؛ اگه نشد، برنامه رو ببند و باز کن.<br>• <b>آهنگ شروع نمی‌شه:</b> صبر کن «در حال دریافت» تموم بشه. اگه گیر کرد، دوباره آهنگ رو لمس کن.<br>• <b>پیام «اتاق روی دستگاه دیگه بازه»:</b> تب‌ها یا گوشی‌های دیگه‌ای که اتاق رو باز کردن ببند.<br>• <b>اتاق پره:</b> هر اتاق فقط ۴ نفر می‌پذیره.<br>• <b>پخش توی پس‌زمینه قطع می‌شه:</b> از تنظیمات گوشی، محدودیت باتری مرورگر رو بردار.<br>• <b>ظاهر برنامه عوض نشده:</b> مرورگر رو کامل ببند و دوباره باز کن.</p></details>
   <p>برای ارتباط، پیشنهاد، گزارش مشکل یا همکاری به این ایمیل پیام بدید:<br><a href="mailto:dreamer1new@gmail.com" dir="ltr">dreamer1new@gmail.com</a></p>
   <button class="main" id="helpX">بستن</button>
+</div></div>
+<div id="lyrM" class="modal hidden"><div class="sheet"><h2 id="lyrT"></h2><pre id="lyrB"></pre><div id="lyrS"></div><button class="main" id="lyrX">بستن</button></div></div>
+<div id="manM" class="modal hidden"><div class="sheet">
+  <h2 id="mT"></h2><p id="mP"></p>
+  <textarea id="mOut" class="ta" readonly></textarea>
+  <div class="send" id="mBtns"><button id="mCopy" style="flex:1">کپی</button><button id="mShare" style="flex:1">ارسال</button></div>
+  <textarea id="mIn" class="ta"></textarea>
+  <button class="main" id="mGo"></button><div id="mS" class="chip"></div>
+  <button class="ghost" id="mX">بستن</button>
 </div></div>
 <audio id="a" preload="auto"></audio>
 
@@ -233,13 +269,14 @@ const $ = id => document.getElementById(id), a = $('a');
 const ld = (k,d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch(e){ return d; } };
 const sv = (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} };
 const COLORS = ['#5b7cff','#ff5fa2','#ff9a3c','#4fc58a','#9b6bff','#ef5350'];
-const THEMES = {sky:['#5b7cff','#b08cff'],nature:['#6fae6e','#c3e1a5'],rose:['#ff6fa8','#ffb3d1'],sunset:['#ff8a3c','#ffc078'],night:['#1b1320','#ff4f98']};
+const THEMES = {sky:['#5b7cff','#b08cff'],nature:['#6fae6e','#c3e1a5'],rose:['#ff6fa8','#ffb3d1'],sunset:['#ff8a3c','#ffc078'],mono:['#111111','#f2f2f2']};
 const ICE = {config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'},
   {urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turn:openrelay.metered.ca:443?transport=tcp'],username:'openrelayproject',credential:'openrelayproject'}]}};
 const I = {play:'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',pause:'<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>',next:'<svg viewBox="0 0 24 24"><path d="M6 5v14l9-7zM16 5h2v14h-2z"/></svg>',prev:'<svg viewBox="0 0 24 24"><path d="M18 5v14l-9-7zM6 5h2v14H6z"/></svg>'};
 $('pp').innerHTML = I.play; $('next').innerHTML = I.next; $('prev').innerHTML = I.prev;
 
-let me = ld('dm-me', null), rooms = ld('dm-rooms', []);
+let me = ld('dm-me', null), rooms = ld('dm-rooms', []), favs = ld('dm-fav', []);
+const saveMe = () => sv('dm-me', {id: me.id, name: me.name, color: me.color, photo: me.photo || null});
 let room = null, peer = null, hostConn = null, isHost = false, gen = 0, left = true, tries = 0;
 const conns = new Map(), localFiles = new Map(), blobUrls = new Map(), sending = new Set();
 let members = [], tracksBy = {}, inbox = {}, cur = null, tok = null, readySet = new Set(), started = false, n = 0, chat = [];
@@ -251,7 +288,7 @@ const digits = s => s.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)
 const allTracks = () => members.flatMap(m => tracksBy[m.uid] || []);
 const ownerOf = id => (allTracks().find(t => t.id === id) || {}).owner;
 const nameOf = u => u === me.uid ? 'من' : ((members.find(m => m.uid === u) || {}).name || '؟');
-function avatar(el, name, color){ el.classList.add('av'); el.style.background = color; el.textContent = [...(name || '؟')][0]; }
+function avatar(el, name, color, photo){ el.classList.add('av'); el.style.background = photo ? `center/cover url(${photo})` : color; el.textContent = photo ? '' : [...(name || '؟')][0]; }
 function dots(el, get, set){ el.innerHTML = ''; COLORS.forEach(c => { const b = document.createElement('button'); b.type = 'button'; b.className = 'dot' + (get() === c ? ' on' : ''); b.style.background = c; b.setAttribute('aria-label', 'رنگ'); b.onclick = () => { set(c); dots(el, get, set); }; el.appendChild(b); }); }
 
 /* ---------- شروع: اسپلش ---------- */
@@ -264,7 +301,7 @@ for (let i = 0; i < 14; i++){
 }
 
 /* ---------- تم ---------- */
-function setTheme(t){ document.documentElement.dataset.theme = t; sv('dm-theme', t); const m = document.querySelector('meta[name=theme-color]'); if (m) m.content = THEMES[t][t === 'night' ? 0 : 1]; renderThemes(); }
+function setTheme(t){ if (!THEMES[t]) t = 'sky'; document.documentElement.dataset.theme = t; sv('dm-theme', t); const m = document.querySelector('meta[name=theme-color]'); if (m) m.content = THEMES[t][t === 'mono' ? 0 : 1]; renderThemes(); }
 function renderThemes(){
   const el = $('themes'); el.innerHTML = '';
   Object.entries(THEMES).forEach(([k, [c1, c2]]) => { const b = document.createElement('button'); b.className = 'dot' + (document.documentElement.dataset.theme === k ? ' on' : ''); b.style.background = `linear-gradient(135deg,${c1},${c2})`; b.setAttribute('aria-label', k); b.onclick = () => { setTheme(k); el.classList.add('hidden'); }; el.appendChild(b); });
@@ -278,23 +315,33 @@ $('help').onclick = e => { if (e.target === $('help')) $('help').classList.add('
 
 /* ---------- صفحه‌ها ---------- */
 const go = id => { ['welcome','home','newroom','room'].forEach(s => $(s).classList.toggle('hidden', s !== id)); status(''); scrollTo(0, 0); };
-let pCol = COLORS[0], rCol = COLORS[1];
-function openProfile(){ $('pName').value = me ? me.name : ''; pCol = me ? me.color : COLORS[0]; dots($('pCols'), () => pCol, c => pCol = c); $('pOk').textContent = me ? 'ذخیره' : 'ادامه'; go('welcome'); }
+let pPhoto = null, rCol = COLORS[1];
+const hue = nm => { let h = 0; for (const ch of nm) h = (h * 31 + ch.charCodeAt(0)) % 360; return `hsl(${h} 60% 55%)`; };
+function showPrev(){ const el = $('pPrev'); el.className = ''; el.style.background = ''; avatar(el, $('pName').value || '؟', hue($('pName').value || '؟'), pPhoto); }
+function openProfile(){ $('pName').value = me ? me.name : ''; pPhoto = me ? me.photo || null : null; showPrev(); $('pOk').textContent = me ? 'ذخیره' : 'ادامه'; go('welcome'); }
+$('pName').oninput = showPrev; $('pPick').onclick = $('pPrev').onclick = () => $('pFile').click();
+$('pFile').onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try { const bm = await createImageBitmap(f), q = Math.min(bm.width, bm.height), c = document.createElement('canvas'); c.width = c.height = 128;
+    c.getContext('2d').drawImage(bm, (bm.width - q) / 2, (bm.height - q) / 2, q, q, 0, 0, 128, 128); pPhoto = c.toDataURL('image/jpeg', .8); showPrev(); }
+  catch(err){ status('این عکس باز نشد.'); }
+};
 $('pOk').onclick = () => {
   const name = $('pName').value.trim(); if (!name) return status('یه اسم وارد کن.');
-  me = {uid: me ? me.uid : rid(), name, color: pCol}; sv('dm-me', me); renderHome(); go('home');
+  const old = me; me = {id: old ? old.id : rid(), name, color: hue(name), photo: pPhoto}; me.uid = old ? old.uid : me.id + '_' + rid().slice(0, 4);
+  saveMe(); renderHome(); go('home');
 };
 $('meAv').onclick = openProfile;
 
 function renderHome(){
-  $('hi').textContent = 'سلام ' + me.name; $('meAv').className = ''; avatar($('meAv'), me.name, me.color);
+  $('hi').textContent = 'سلام ' + me.name; $('meAv').className = ''; avatar($('meAv'), me.name, me.color, me.photo);
   const ul = $('rooms'); ul.innerHTML = '';
   if (!rooms.length){ ul.innerHTML = '<li class="empty">هنوز اتاقی نداری. یه اتاق جدید بساز یا با کد وارد اتاق دوستت شو.</li>'; return; }
   rooms.forEach(r => {
     const li = document.createElement('li'), av = document.createElement('div'), sp = document.createElement('span');
     avatar(av, r.name, r.color);
     const b = document.createElement('b'); b.textContent = r.name;
-    const s = document.createElement('small'); s.textContent = (r.host ? 'ساخته‌ی تو' : 'عضو') + ' · کد ' + r.id;
+    const s = document.createElement('small'); s.textContent = (r.host ? 'ساخته‌ی تو' : 'عضو') + (r.mode === 'manual' ? ' · دستی' : ' · کد ' + r.id);
     sp.append(b, s);
     const x = document.createElement('button'); x.textContent = '✕'; x.setAttribute('aria-label', 'حذف اتاق');
     x.onclick = e => { e.stopPropagation(); if (confirm('این اتاق از لیست حذف بشه؟')){ rooms = rooms.filter(q => q.id !== r.id); sv('dm-rooms', rooms); renderHome(); } };
@@ -304,7 +351,7 @@ function renderHome(){
 $('newRoom').onclick = () => { $('rName').value = ''; dots($('rCols'), () => rCol, c => rCol = c); $('codeIn').value = ''; go('newroom'); };
 $('nrBack').onclick = () => go('home');
 $('mkRoom').onclick = () => {
-  const r = {id: String(100000 + Math.floor(Math.random() * 900000)), name: $('rName').value.trim() || 'اتاق ' + me.name, color: rCol, host: true};
+  const r = {id: newMode === 'manual' ? 'm' + rid().slice(0, 6) : String(100000 + Math.floor(Math.random() * 900000)), name: $('rName').value.trim() || 'اتاق ' + me.name, color: rCol, host: true, mode: newMode};
   rooms.push(r); sv('dm-rooms', rooms); enterRoom(r);
 };
 $('goRoom').onclick = () => {
@@ -314,25 +361,30 @@ $('goRoom').onclick = () => {
 };
 
 /* ---------- ورود به اتاق و شبکه ---------- */
-function leaveNet(){ gen++; left = true; try { peer && peer.destroy(); } catch(e){} peer = null; hostConn = null; conns.clear(); a.pause(); }
-function enterRoom(r){
+function leaveNet(){ gen++; left = true; try { peer && peer.destroy(); } catch(e){} try { conns.forEach(c => c.close && c.close()); hostConn && hostConn.close && hostConn.close(); } catch(e){} peer = null; hostConn = null; conns.clear(); a.pause(); }
+function enterRoom(r, pre){
   leaveNet(); room = r; isHost = !!r.host; left = false; tries = 0;
   blobUrls.forEach(u => URL.revokeObjectURL(u));
-  localFiles.clear(); blobUrls.clear(); sending.clear(); inbox = {}; tracksBy = {}; n = 0; cur = null; tok = null; started = false;
-  members = [{uid: me.uid, name: me.name, color: me.color}];
+  localFiles.clear(); blobUrls.clear(); mineKeys.clear(); sending.clear(); inbox = {}; tracksBy = {}; n = 0; cur = null; tok = null; started = false;
+  members = [{uid: me.uid, name: me.name, color: me.color, photo: me.photo}];
   chat = ld('dm-chat-' + r.id, []);
   a.removeAttribute('src'); $('now').textContent = 'آهنگی انتخاب نشده'; $('sub').textContent = 'یه آهنگ از پلی‌لیست انتخاب کن'; $('lyr').classList.add('hidden'); setCover(null, '');
   tab('play'); renderTop(); renderList(); renderChat(); go('room');
-  isHost ? startHost() : startGuest();
+  loadLibrary();
+  if (r.mode === 'manual'){
+    if (isHost){ status('اتاق دستی: دکمه‌ی + بالای صفحه رو بزن تا دعوت‌نامه بسازی.'); ++gen; }
+    else if (pre) startManualGuest(pre);
+    else { status('این اتاق دستیه؛ از سازنده یه دعوت‌نامه‌ی جدید بگیر.'); openMan('guest'); }
+  } else isHost ? startHost() : startGuest();
 }
 $('rBack').onclick = () => { leaveNet(); renderHome(); go('home'); };
-$('rInfo').onclick = () => { if (navigator.clipboard) navigator.clipboard.writeText(room.id).then(() => status('کد اتاق کپی شد: ' + room.id)).catch(() => {}); };
+$('rInfo').onclick = () => { if (room.mode !== 'manual' && navigator.clipboard) navigator.clipboard.writeText(room.id).then(() => status('کد اتاق کپی شد: ' + room.id)).catch(() => {}); };
 
 function renderTop(){
   $('rAv').className = ''; avatar($('rAv'), room.name, room.color);
-  $('rName2').textContent = room.name; $('rSub').textContent = members.length + ' از ۴ نفر · کد ' + room.id;
+  $('rName2').textContent = room.name; $('rSub').textContent = members.length + ' از ۴ نفر' + (room.mode === 'manual' ? ' · دستی' : ' · کد ' + room.id); $('addF').classList.toggle('hidden', !(room.mode === 'manual' && isHost));
   const mm = $('mem'); mm.innerHTML = '';
-  members.forEach(m => { const d = document.createElement('div'); avatar(d, m.name, m.color); d.title = m.name; mm.appendChild(d); });
+  members.forEach(m => { const d = document.createElement('div'); avatar(d, m.name, m.color, m.photo); d.title = m.name; mm.appendChild(d); });
 }
 
 function bc(m){
@@ -340,7 +392,7 @@ function bc(m){
   if (isHost) conns.forEach(c => c.open && c.send(m));
   else if (hostConn && hostConn.open) hostConn.send(m);
 }
-const busy = () => [...(isHost ? conns.values() : [hostConn])].some(c => c && c.dataChannel && c.dataChannel.bufferedAmount > 1e6);
+const busy = () => [...(isHost ? conns.values() : [hostConn])].some(c => c && c.dataChannel && c.dataChannel.bufferedAmount > 8e6);
 const bcMembers = () => { bc({t:'members', list: members}); renderTop(); };
 
 async function startHost(){
@@ -387,52 +439,77 @@ async function startGuest(){
 }
 
 /* ---------- پیام‌ها ---------- */
+const mimes = new Map(), mb = x => (x / 1048576).toFixed(1);
+let pend = null;
+function prog(txt, pct, sub){
+  const p = $('prog'); if (txt == null) return p.classList.add('hidden');
+  p.classList.remove('hidden'); p.classList.toggle('ind', pct == null);
+  $('pTxt').textContent = txt; $('pPct').textContent = pct == null ? '' : pct + '٪'; $('pBar').style.width = (pct == null ? 40 : pct) + '%'; $('pSub').textContent = sub || '';
+}
+function sendSync(c){
+  c.send({t:'members', list: members});
+  Object.keys(tracksBy).forEach(k => c.send({t:'tracks', u: k, list: tracksBy[k].map(({id, name}) => ({id, name}))}));
+  c.send({t:'history', list: chat.slice(-30)});
+}
+function announce(){ const mine = tracksBy[me.uid]; if (mine && mine.length) bc({t:'tracks', list: mine.map(({id, name}) => ({id, name}))}); }
 function onData(m, c){
   if (!m || !m.t) return;
-  if (isHost && m.t !== 'hello') conns.forEach(x => { if (x !== c && x.open) x.send(m); });
+  if (isHost && m.t !== 'hello' && m.t !== 'resync') conns.forEach(x => { if (x !== c && x.open) x.send(m); });
   switch (m.t){
     case 'hello': {
-      const u = m.u;
+      const u = m.u; if (!u || u.uid === me.uid) return;
       conns.forEach(x => { if (x !== c && x.uid === u.uid){ x.uid = null; x.close(); } });
       if (!members.some(x => x.uid === u.uid) && members.length >= 4){ c.send({t:'full'}); setTimeout(() => c.close(), 400); return; }
       c.uid = u.uid; conns.set(c.peer, c);
-      members = members.filter(x => x.uid !== u.uid).concat({uid: u.uid, name: u.name, color: u.color});
-      c.send({t:'welcome', room: {name: room.name, color: room.color}});
-      Object.keys(tracksBy).forEach(k => c.send({t:'tracks', u: k, list: tracksBy[k].map(({id, name}) => ({id, name}))}));
-      bcMembers(); break;
+      members = members.filter(x => x.uid !== u.uid).concat({uid: u.uid, name: u.name, color: u.color, photo: u.photo || null});
+      c.send({t:'welcome', room: {name: room.name, color: room.color, id: room.id, mode: room.mode}});
+      sendSync(c); bcMembers(); break;
     }
+    case 'resync': if (isHost) sendSync(c); break;
     case 'full': left = true; status('این اتاق پره (حداکثر ۴ نفر).'); break;
     case 'welcome':
       if (!isHost){
-        room.name = m.room.name; room.color = m.room.color; renderTop();
+        room.name = m.room.name; room.color = m.room.color; room.id = m.room.id || room.id; room.mode = m.room.mode || room.mode; chat = ld('dm-chat-' + room.id, chat); renderTop();
         const i = rooms.findIndex(r => r.id === room.id);
         if (i < 0){ delete room.tmp; rooms.push(room); } else rooms[i] = Object.assign(rooms[i], {name: room.name, color: room.color});
-        sv('dm-rooms', rooms);
+        sv('dm-rooms', rooms); announce();
       } break;
     case 'members':
       members = m.list; Object.keys(tracksBy).forEach(k => { if (!members.some(x => x.uid === k)) delete tracksBy[k]; });
       renderTop(); renderList(); break;
     case 'tracks':
-      if (m.u !== me.uid){ tracksBy[m.u] = m.list.map(t => ({id: t.id, name: t.name, owner: m.u})); renderList(); } break;
+      if (m.u !== me.uid){ tracksBy[m.u] = m.list.map(t => ({id: t.id, name: t.name, owner: m.u})); renderList(); }
+      if (pend && ownerOf(pend.id)){ const p = pend; pend = null; handleSelect(p.id, p.t); }
+      break;
     case 'select': handleSelect(m.id, m.tok); break;
-    case 'file-start': if (!blobUrls.has(m.id)) inbox[m.id] = {parts: [], got: 0, size: m.size, mime: m.mime}; break;
+    case 'file-start': if (!blobUrls.has(m.id) && (!m.to || m.to === me.uid)) inbox[m.id] = {parts: [], got: 0, size: m.size, mime: m.mime, t0: performance.now()}; break;
     case 'chunk': {
       const b = inbox[m.id]; if (!b) break;
       b.parts.push(m.data); b.got += m.data.byteLength;
-      if (m.id === cur) status('در حال دریافت… ' + Math.round(b.got / b.size * 100) + '٪');
+      if (m.id === cur || dl.has(m.id)){
+        const tr = allTracks().find(x => x.id === cur) || {}, sp = b.got / Math.max((performance.now() - b.t0) / 1000, .2);
+        prog('در حال دریافت «' + (tr.name || '') + '» از ' + nameOf(tr.owner), Math.round(b.got / b.size * 100),
+          mb(b.got) + ' از ' + mb(b.size) + ' مگابایت · ' + mb(sp) + ' مگابایت بر ثانیه · حدود ' + Math.ceil((b.size - b.got) / Math.max(sp, 1)) + ' ثانیه مونده');
+      }
       break;
     }
     case 'file-end': {
       const b = inbox[m.id]; if (!b) break;
-      blobUrls.set(m.id, URL.createObjectURL(new Blob(b.parts, {type: b.mime || 'audio/mpeg'}))); delete inbox[m.id];
-      if (m.id === cur){ a.src = blobUrls.get(m.id); status(''); coverFor(m.id); bc({t:'ready', tok}); }
+      blobUrls.set(m.id, URL.createObjectURL(new Blob(b.parts, {type: b.mime || 'audio/mpeg'}))); mimes.set(m.id, b.mime); delete inbox[m.id];
+      if (m.id === cur){ a.src = blobUrls.get(m.id); coverFor(m.id); prog('آماده‌ست؛ منتظر بقیه…', null); bc({t:'ready', tok}); }
+      if (dl.has(m.id)){ dl.delete(m.id); const t = allTracks().find(x => x.id === m.id); if (t) saveBlob(t); if (m.id !== cur) prog(null); }
       break;
     }
+    case 'dlreq': if (ownerOf(m.id) === me.uid && !sending.has(m.id)) sendFile(m.id, m.u); break;
     case 'need': if (m.tok === tok && ownerOf(cur) === me.uid && !sending.has(cur)) sendFile(cur); break;
     case 'ready': if (m.tok === tok && ownerOf(cur) === me.uid){ readySet.add(m.u); tryStart(); } break;
     case 'state':
-      if (a.getAttribute('src')){ a.currentTime = m.time; m.playing ? a.play().catch(() => {}) : a.pause(); } break;
+      if (a.getAttribute('src')){ a.currentTime = m.time; if (m.playing){ a.play().catch(() => {}); prog(null); status(''); } else a.pause(); } break;
     case 'chat': addChat(m); break;
+    case 'history': {
+      const seen = new Set(chat.map(x => x.u + x.ts)); m.list.forEach(x => { if (!seen.has(x.u + x.ts)) chat.push(x); });
+      chat.sort((p, q) => p.ts - q.ts); chat = chat.slice(-60); sv('dm-chat-' + room.id, chat); renderChat(); break;
+    }
   }
 }
 
@@ -440,28 +517,81 @@ function onData(m, c){
 $('btnAdd').onclick = () => $('files').click();
 $('files').onchange = e => addFiles(e.target.files);
 ['dragover', 'drop'].forEach(ev => document.addEventListener(ev, e => { e.preventDefault(); if (ev === 'drop' && room && !$('room').classList.contains('hidden')) addFiles(e.dataTransfer.files); }));
+const mineKeys = new Map();
+const idb = new Promise(res => { try { const r = indexedDB.open('dm', 1); r.onupgradeneeded = () => r.result.createObjectStore('songs'); r.onsuccess = () => res(r.result); r.onerror = () => res(null); } catch(e){ res(null); } });
+const dbp = (mode, fn) => idb.then(d => d && new Promise(res => { try { const t = d.transaction('songs', mode), r = fn(t.objectStore('songs')); t.oncomplete = () => res(r && r.result); t.onerror = t.onabort = () => res(null); } catch(e){ res(null); } }));
+try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch(e){}
+function addLocal(f, key){
+  if ([...mineKeys.values()].includes(key)) return false;
+  const mine = tracksBy[me.uid] = tracksBy[me.uid] || [], id = me.uid + '-' + (n++);
+  localFiles.set(id, f); blobUrls.set(id, URL.createObjectURL(f)); mineKeys.set(id, key);
+  mine.push({id, name: f.name.replace(/\.[^.]+$/, ''), owner: me.uid}); return true;
+}
 function addFiles(list){
-  let c = 0; const mine = tracksBy[me.uid] = tracksBy[me.uid] || [];
+  let c = 0;
   for (const f of list){
     if (f.type && !f.type.startsWith('audio/')) continue;
-    const id = me.uid + '-' + (n++);
-    localFiles.set(id, f); blobUrls.set(id, URL.createObjectURL(f));
-    mine.push({id, name: f.name.replace(/\.[^.]+$/, ''), owner: me.uid}); c++;
+    const key = f.name + '|' + f.size;
+    if (addLocal(f, key)){ c++; dbp('readwrite', s => s.put({key, name: f.name, blob: f}, key)); }
   }
-  $('files').value = ''; renderList();
-  bc({t:'tracks', list: mine.map(({id, name}) => ({id, name}))});
-  status(c + ' آهنگ اضافه شد ✓'); setTimeout(() => { if ($('status').textContent.includes('✓')) status(''); }, 2500);
+  $('files').value = ''; renderList(); announce();
+  status(c + ' آهنگ اضافه و ذخیره شد ✓'); setTimeout(() => { if ($('status').textContent.includes('✓')) status(''); }, 2500);
+}
+async function loadLibrary(){
+  const rows = (await dbp('readonly', s => s.getAll())) || [];
+  rows.forEach(r => addLocal(r.blob.name ? r.blob : new File([r.blob], r.name, {type: r.blob.type}), r.key));
+  renderList(); announce();
+}
+function removeSong(t){
+  const key = mineKeys.get(t.id); if (!key) return;
+  dbp('readwrite', s => s.delete(key)); URL.revokeObjectURL(blobUrls.get(t.id));
+  [localFiles, blobUrls, mineKeys].forEach(m => m.delete(t.id));
+  tracksBy[me.uid] = (tracksBy[me.uid] || []).filter(x => x.id !== t.id);
+  if (cur === t.id){ a.pause(); a.removeAttribute('src'); cur = null; $('now').textContent = 'آهنگی انتخاب نشده'; }
+  renderList(); bc({t:'tracks', list: tracksBy[me.uid].map(({id, name}) => ({id, name}))});
+}
+function cleanName(s){ return s.replace(/_+/g, ' ').replace(/\(.*?\)|\[.*?\]/g, '').replace(/\s+/g, ' ').trim(); }
+const key = s => cleanName(s).toLowerCase();
+const isFav = s => favs.some(f => f.k === key(s));
+function toggleFav(name){ const k = key(name); favs = isFav(name) ? favs.filter(f => f.k !== k) : favs.concat({k, name}); sv('dm-fav', favs); renderList(); }
+const HEART = '<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>';
+function iconBtn(html, label, fn){ const b = document.createElement('button'); b.className = 'lb'; b.innerHTML = html; b.setAttribute('aria-label', label); b.onclick = e => { e.stopPropagation(); fn(); }; return b; }
+const heartBtn = (name, fn) => iconBtn('<svg class="hrt' + (isFav(name) ? ' on' : '') + '" viewBox="0 0 24 24">' + HEART + '</svg>', 'مورد علاقه', fn);
+const EXT = {'audio/mpeg':'mp3','audio/mp4':'m4a','audio/x-m4a':'m4a','audio/aac':'aac','audio/ogg':'ogg','audio/wav':'wav','audio/x-wav':'wav','audio/flac':'flac','audio/webm':'webm'};
+const dl = new Set();
+function saveBlob(t){
+  const u = blobUrls.get(t.id), f = localFiles.get(t.id), ext = f ? (f.name.match(/\.[^.]+$/) || ['.mp3'])[0] : '.' + (EXT[mimes.get(t.id)] || 'mp3');
+  const l = document.createElement('a'); l.href = u; l.download = t.name.replace(/[\\/:*?"<>|]/g, '') + ext; document.body.appendChild(l); l.click(); l.remove();
+  status('دانلود شروع شد ✓'); setTimeout(() => { if ($('status').textContent.includes('✓')) status(''); }, 2500);
+}
+function download(t){
+  if (blobUrls.has(t.id)) return saveBlob(t);
+  dl.add(t.id); prog('در حال دریافت «' + t.name + '» برای دانلود…', 0, 'منتظر شروع ارسال از ' + nameOf(t.owner)); bc({t:'dlreq', id: t.id});
 }
 function renderList(){
   const all = allTracks(), ul = $('list'); ul.innerHTML = '';
   $('cnt').textContent = all.length ? all.length + ' آهنگ' : '';
-  if (!all.length){ ul.innerHTML = '<li style="justify-content:center;color:var(--muted)">هنوز آهنگی اضافه نشده</li>'; return; }
+  if (!all.length) ul.innerHTML = '<li class="emp">هنوز آهنگی اضافه نشده</li>';
   all.forEach((t, k) => {
     const li = document.createElement('li'); if (t.id === cur) li.className = 'on';
     const i = document.createElement('i'); i.textContent = k + 1;
     const s = document.createElement('span'); s.textContent = t.name;
     const w = document.createElement('small'); w.textContent = nameOf(t.owner);
-    li.append(i, s, w); li.onclick = () => select(t.id); ul.appendChild(li);
+    const act = t.owner === me.uid
+      ? iconBtn('<svg class="st" viewBox="0 0 24 24"><path d="M5 7h14M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>', 'حذف از آهنگ‌های من', () => { if (confirm('این آهنگ از حافظه‌ی برنامه پاک بشه؟')) removeSong(t); })
+      : iconBtn('<svg class="st" viewBox="0 0 24 24"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg>', 'دانلود روی گوشی', () => download(t));
+    li.append(i, s, w, heartBtn(t.name, () => toggleFav(t.name)), act);
+    li.onclick = () => select(t.id); ul.appendChild(li);
+  });
+  const fu = $('favs'); fu.innerHTML = ''; $('fcnt').textContent = favs.length ? favs.length + ' آهنگ' : '';
+  if (!favs.length) fu.innerHTML = '<li class="emp">با زدن قلب کنار هر آهنگ، اینجا ذخیره می‌شه.</li>';
+  favs.forEach(f => {
+    const t = all.find(x => key(x.name) === f.k), li = document.createElement('li'); if (!t) li.style.opacity = .55;
+    const s = document.createElement('span'); s.textContent = f.name;
+    const w = document.createElement('small'); w.textContent = t ? nameOf(t.owner) : 'در این اتاق نیست';
+    li.append(s, w, heartBtn(f.name, () => toggleFav(f.name)));
+    if (t) li.onclick = () => { select(t.id); tab('play'); };
+    fu.appendChild(li);
   });
 }
 
@@ -502,27 +632,36 @@ async function coverFor(id){
 /* ---------- انتخاب و همگام‌سازی ---------- */
 function select(id){ const t = me.uid + Date.now(); bc({t:'select', id, tok: t}); handleSelect(id, t); }
 function handleSelect(id, t){
-  cur = id; tok = t; readySet = new Set(); started = false; a.pause(); renderList(); coverFor(id);
-  const tr = allTracks().find(x => x.id === id); if (!tr) return;
+  a.pause(); cur = id; tok = t; readySet = new Set(); started = false; renderList();
+  const tr = allTracks().find(x => x.id === id);
+  if (!tr){
+    pend = {id, t}; prog('در حال همگام‌سازی لیست آهنگ‌ها…', null); if (!isHost) bc({t:'resync'});
+    setTimeout(() => { if (pend && pend.id === id){ pend = null; prog(null); status('آهنگ پیدا نشد. یه بار دیگه انتخابش کن.'); } }, 8000);
+    return;
+  }
+  pend = null; coverFor(id);
   $('now').textContent = tr.name; $('sub').textContent = tr.owner === me.uid ? 'از گوشی تو' : 'از طرف ' + nameOf(tr.owner);
   $('lyr').classList.remove('hidden'); setMeta(tr.name);
-  if (tr.owner === me.uid){ a.src = blobUrls.get(id); status('منتظر آماده شدن بقیه…'); tryStart(); }
-  else if (blobUrls.has(id)){ a.src = blobUrls.get(id); status(''); bc({t:'ready', tok: t}); }
-  else { a.removeAttribute('src'); status('در حال دریافت آهنگ…'); bc({t:'need', tok: t}); }
+  if (tr.owner === me.uid){ a.src = blobUrls.get(id); tryStart(); }
+  else if (blobUrls.has(id)){ a.src = blobUrls.get(id); prog('آماده‌ست؛ منتظر بقیه…', null); bc({t:'ready', tok: t}); }
+  else { a.removeAttribute('src'); prog('در حال دریافت «' + tr.name + '»…', 0, 'منتظر شروع ارسال از ' + nameOf(tr.owner)); bc({t:'need', tok: t}); }
 }
 function tryStart(){
   if (!cur || started || ownerOf(cur) !== me.uid || !a.getAttribute('src')) return;
-  if (readySet.size >= members.length - 1){ started = true; status(''); a.currentTime = 0; a.play().catch(() => {}); bc({t:'state', playing: true, time: 0}); }
+  const need = members.length - 1;
+  if (readySet.size >= need){ started = true; prog(null); status(''); a.currentTime = 0; a.play().catch(() => {}); bc({t:'state', playing: true, time: 0}); }
+  else if (!sending.size) prog('منتظر آماده شدن بقیه…', null, readySet.size + ' از ' + need + ' نفر آماده‌ان');
 }
-async function sendFile(id){
-  sending.add(id); const f = localFiles.get(id), buf = await f.arrayBuffer(), CH = 16384;
-  bc({t:'file-start', id, size: buf.byteLength, mime: f.type});
-  for (let i = 0; i < buf.byteLength; i += CH){
-    if (cur !== id){ sending.delete(id); return; }
-    while (busy()) await sleep(40);
+async function sendFile(id, to){
+  sending.add(id); const f = localFiles.get(id), buf = await f.arrayBuffer(), CH = 65536, tr = allTracks().find(x => x.id === id) || {};
+  bc({t:'file-start', id, size: buf.byteLength, mime: f.type, to});
+  for (let i = 0, k = 0; i < buf.byteLength; i += CH, k++){
+    if (!to && cur !== id){ sending.delete(id); return; }
+    while (busy()) await sleep(15);
     bc({t:'chunk', id, data: buf.slice(i, i + CH)});
+    if (k % 4 === 0){ if (!to) prog('در حال ارسال «' + (tr.name || '') + '» به بقیه', Math.round(i / buf.byteLength * 100), mb(i) + ' از ' + mb(buf.byteLength) + ' مگابایت'); await sleep(0); }
   }
-  bc({t:'file-end', id}); sending.delete(id);
+  bc({t:'file-end', id}); sending.delete(id); if (!to) tryStart();
 }
 
 /* ---------- کنترل‌ها ---------- */
@@ -544,7 +683,19 @@ a.onplay = () => { $('pp').innerHTML = I.pause; $('stage').classList.add('playin
 a.onpause = () => { $('pp').innerHTML = I.play; $('stage').classList.remove('playing'); };
 a.onended = () => { if (isHost) step(1); };
 a.onerror = () => { if (a.getAttribute('src')) status('این آهنگ پخش نشد (فرمت پشتیبانی نمی‌شه).'); };
-$('lyr').onclick = () => { const t = allTracks().find(x => x.id === cur); if (t) window.open('https://www.google.com/search?q=' + encodeURIComponent('متن آهنگ ' + t.name), '_blank', 'noopener'); };
+$('lyrX').onclick = () => $('lyrM').classList.add('hidden');
+$('lyrM').onclick = e => { if (e.target === $('lyrM')) $('lyrM').classList.add('hidden'); };
+$('lyr').onclick = async () => {
+  const t = allTracks().find(x => x.id === cur); if (!t) return;
+  const B = $('lyrB'), S = $('lyrS');
+  $('lyrT').textContent = t.name; B.textContent = 'در حال پیدا کردن متن آهنگ…'; S.textContent = ''; $('lyrM').classList.remove('hidden');
+  try {
+    const r = await fetch('https://lrclib.net/api/search?q=' + encodeURIComponent(cleanName(t.name)));
+    const hit = (await r.json()).find(x => x.plainLyrics);
+    if (hit){ B.textContent = hit.plainLyrics; S.textContent = hit.trackName + ' · ' + hit.artistName + ' — منبع: LRCLIB'; return; }
+    B.textContent = 'متنی برای این آهنگ پیدا نشد. (برای بعضی آهنگ‌ها، به‌خصوص آهنگ‌های جدید یا فارسی، متن در دسترس نیست.)';
+  } catch(e){ B.textContent = 'اتصال به منبع متن آهنگ برقرار نشد. اینترنت یا VPN رو چک کن.'; }
+};
 function setMeta(title){
   if (!('mediaSession' in navigator)) return;
   navigator.mediaSession.metadata = new MediaMetadata({title, artist: 'DreamMedia'});
@@ -554,11 +705,10 @@ function setMeta(title){
 
 /* ---------- گفت‌وگو و تب‌ها ---------- */
 function tab(t){
-  $('tPlay').classList.toggle('hidden', t !== 'play'); $('tChat').classList.toggle('hidden', t !== 'chat');
-  $('tbPlay').classList.toggle('on', t === 'play'); $('tbChat').classList.toggle('on', t === 'chat');
+  ['Play', 'Chat', 'Fav'].forEach(x => { const on = t === x.toLowerCase(); $('t' + x).classList.toggle('hidden', !on); $('tb' + x).classList.toggle('on', on); });
   if (t === 'chat'){ $('dotc').classList.add('hidden'); const m = $('msgs'); m.scrollTop = m.scrollHeight; }
 }
-$('tbPlay').onclick = () => tab('play'); $('tbChat').onclick = () => tab('chat');
+$('tbPlay').onclick = () => tab('play'); $('tbChat').onclick = () => tab('chat'); $('tbFav').onclick = () => tab('fav');
 function renderChat(){
   const el = $('msgs'); el.innerHTML = '';
   chat.forEach(m => {
@@ -568,18 +718,99 @@ function renderChat(){
   el.scrollTop = el.scrollHeight;
 }
 function addChat(m){
-  chat.push({u: m.u, name: m.name, text: m.text}); chat = chat.slice(-60); sv('dm-chat-' + room.id, chat); renderChat();
+  const ts = m.ts || Date.now();
+  if (chat.some(x => x.u === m.u && x.ts === ts)) return;
+  chat.push({u: m.u, name: m.name, text: m.text, ts}); chat = chat.slice(-60); sv('dm-chat-' + room.id, chat); renderChat();
   if ($('tChat').classList.contains('hidden') && m.u !== me.uid) $('dotc').classList.remove('hidden');
 }
 function sendChat(){
   const text = $('cIn').value.trim(); if (!text) return;
-  const m = {t:'chat', name: me.name, text}; bc(m); addChat(m); $('cIn').value = '';
+  const m = {t:'chat', name: me.name, text, ts: Date.now()}; bc(m); addChat(m); $('cIn').value = '';
 }
 $('cSend').onclick = sendChat;
 $('cIn').onkeydown = e => { if (e.key === 'Enter') sendChat(); };
 
+/* ---------- حالت دستی (بدون سرور) ---------- */
+let newMode = 'code', manMode = null, pendingInv = null;
+$('sgCode').onclick = () => { newMode = 'code'; $('sgCode').classList.add('on'); $('sgMan').classList.remove('on'); };
+$('sgMan').onclick = () => { newMode = 'manual'; $('sgMan').classList.add('on'); $('sgCode').classList.remove('on'); };
+$('goMan').onclick = () => openMan('guest');
+$('addF').onclick = () => hostInvite();
+$('mX').onclick = () => $('manM').classList.add('hidden');
+$('mCopy').onclick = () => { const t = $('mOut').value; if (navigator.clipboard) navigator.clipboard.writeText(t).then(() => $('mS').textContent = 'کپی شد ✓').catch(() => {}); $('mOut').select(); };
+$('mShare').onclick = () => { const t = $('mOut').value; if (navigator.share) navigator.share({text: t}).catch(() => {}); else $('mCopy').onclick(); };
+const gathered = pc => new Promise(res => {
+  if (pc.iceGatheringState === 'complete') return res();
+  const t = setTimeout(res, 4000);
+  pc.addEventListener('icegatheringstatechange', () => { if (pc.iceGatheringState === 'complete'){ clearTimeout(t); res(); } });
+});
+function mkConn(pc, dc){
+  const h = {open: false, peer: 'm' + rid(), dataChannel: dc, _e: {}}, em = (e, x) => h._e[e] && h._e[e](x);
+  h.on = (e, f) => { h._e[e] = f; if (e === 'open' && h.open) f(); };
+  h.send = m => {
+    if (dc.readyState !== 'open') return;
+    if (m.t === 'chunk'){ const ib = new TextEncoder().encode(m.id), d = new Uint8Array(m.data), o = new Uint8Array(1 + ib.length + d.length); o[0] = ib.length; o.set(ib, 1); o.set(d, 1 + ib.length); dc.send(o.buffer); }
+    else dc.send(JSON.stringify(m));
+  };
+  h.close = () => { try { dc.close(); pc.close(); } catch(e){} };
+  dc.binaryType = 'arraybuffer';
+  dc.onopen = () => { h.open = true; em('open'); };
+  dc.onclose = () => { if (h.open){ h.open = false; em('close'); } };
+  dc.onmessage = ev => {
+    if (typeof ev.data === 'string') return em('data', JSON.parse(ev.data));
+    const u = new Uint8Array(ev.data), l = u[0]; em('data', {t:'chunk', id: new TextDecoder().decode(u.slice(1, 1 + l)), data: u.slice(1 + l).buffer});
+  };
+  pc.onconnectionstatechange = () => { if (['failed', 'closed', 'disconnected'].includes(pc.connectionState) && h.open){ h.open = false; em('close'); } };
+  if (dc.readyState === 'open'){ h.open = true; setTimeout(() => em('open')); }
+  return h;
+}
+function openMan(mode){
+  manMode = mode; const host = mode === 'host';
+  $('manM').classList.remove('hidden'); $('mS').textContent = ''; $('mIn').value = ''; $('mOut').value = '';
+  $('mT').textContent = host ? 'افزودن دوست (بدون سرور)' : 'ورود با دعوت‌نامه';
+  $('mP').innerHTML = host ? '۱) متن بالا رو با ایتا، بله یا پیامک برای دوستت بفرست.<br>۲) جوابش رو توی کادر پایین بچسبون و «اتصال» رو بزن.' : '۱) دعوت‌نامه‌ی سازنده رو بچسبون و «ساخت جواب» رو بزن.<br>۲) جواب رو برای سازنده بفرست و صبر کن تا وصل بشی.';
+  $('mOut').classList.toggle('hidden', !host); $('mBtns').classList.toggle('hidden', !host);
+  $('mIn').placeholder = host ? 'جواب دوستت رو اینجا بچسبون' : 'دعوت‌نامه رو اینجا بچسبون'; $('mGo').textContent = host ? 'اتصال' : 'ساخت جواب';
+}
+async function hostInvite(){
+  openMan('host'); const g = gen; $('mOut').value = 'در حال ساختن دعوت‌نامه…';
+  const pc = new RTCPeerConnection(ICE.config), c = mkConn(pc, pc.createDataChannel('dm'));
+  c.on('open', () => { conns.set(c.peer, c); $('mS').textContent = 'وصل شد ✓'; setTimeout(() => { if (manMode === 'host') $('manM').classList.add('hidden'); }, 900); });
+  c.on('data', m => onData(m, c)); c.on('close', () => { if (g === gen) dropConn(c); }); c.on('error', () => {});
+  await pc.setLocalDescription(await pc.createOffer()); await gathered(pc);
+  $('mOut').value = 'DM1:' + btoa(pc.localDescription.sdp); pendingInv = {pc, c};
+}
+async function guestAnswer(sdp){
+  const pc = new RTCPeerConnection(ICE.config), dcP = new Promise(r => pc.ondatachannel = e => r(e.channel)), S = $('mS');
+  await pc.setRemoteDescription({type: 'offer', sdp}); await pc.setLocalDescription(await pc.createAnswer()); await gathered(pc);
+  $('mOut').value = 'DM1:' + btoa(pc.localDescription.sdp); $('mOut').classList.remove('hidden'); $('mBtns').classList.remove('hidden');
+  S.textContent = 'این جواب رو برای سازنده بفرست و صبر کن تا وصل بشه…';
+  const c = mkConn(pc, await dcP);
+  await new Promise((res, rej) => { if (c.open) res(); else { c.on('open', res); setTimeout(() => rej(), 90000); } });
+  $('manM').classList.add('hidden');
+  enterRoom({id: 'm' + rid().slice(0, 6), name: 'اتاق دستی', color: COLORS[0], host: false, tmp: true, mode: 'manual'}, c);
+}
+$('mGo').onclick = async () => {
+  const S = $('mS'), txt = $('mIn').value.replace(/\s+/g, '');
+  try {
+    if (!txt.startsWith('DM1:')) return S.textContent = 'متن درست نیست. باید با DM1: شروع بشه.';
+    const sdp = atob(txt.slice(4));
+    if (manMode === 'host'){
+      if (!pendingInv) return;
+      await pendingInv.pc.setRemoteDescription({type: 'answer', sdp}); S.textContent = 'در حال اتصال…';
+      const c = pendingInv.c; setTimeout(() => { if (!c.open) S.textContent = 'وصل نشد. هر دو روی یه شبکه‌اید؟ دعوت‌نامه‌ی جدید بساز و دوباره امتحان کنید.'; }, 25000);
+    } else { S.textContent = 'در حال ساخت جواب…'; guestAnswer(sdp).catch(() => { S.textContent = 'وصل نشد. دوباره دعوت‌نامه بگیر و امتحان کن.'; }); }
+  } catch(e){ S.textContent = 'متن درست نیست یا قبلاً استفاده شده.'; }
+};
+function startManualGuest(c){
+  const g = ++gen; hostConn = c;
+  c.on('data', m => onData(m, c)); c.on('error', () => {});
+  c.on('close', () => { if (g === gen && !left) status('ارتباط قطع شد. دوباره از «ورود با دعوت‌نامه» وصل شو.'); });
+  c.send({t:'hello', u: me});
+}
+
 /* ---------- شروع ---------- */
-if (me){ renderHome(); go('home'); } else openProfile();
+if (me){ me.id = me.id || me.uid || rid(); me.uid = me.id + '_' + rid().slice(0, 4); renderHome(); go('home'); } else openProfile();
 </script>
 </body>
 </html>
