@@ -1,4 +1,4 @@
-const V='dm-v3',SHELL=['./','index.html','manifest.json','icon-192.png','icon-512.png','logo.png'];
+const V='dm-v4',SHELL=['./','index.html','manifest.json','icon-192.png','icon-512.png','logo.png'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V).map(x=>caches.delete(x)))).then(()=>clients.claim())));
 self.addEventListener('fetch',e=>{

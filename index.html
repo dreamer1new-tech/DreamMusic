@@ -98,6 +98,7 @@ svg{width:26px;height:26px;fill:currentColor}
 </section>
 
 <div id="status"></div>
+<div id="dbg" class="chip" style="direction:ltr"></div>
 
 <section id="player" class="hidden" style="display:flex;flex-direction:column;gap:16px">
   <div class="card">
@@ -191,11 +192,11 @@ async function startHost(){
     if (e.type === 'unavailable-id') startHost();
     else status('خطا در اتصال: ' + e.type);
   });
-  peer.on('connection', c => { conn = c; bind(); });
+  peer.on('connection', c => { conn = c; watchIce(c); bind(); });
 }
 
 $('btnGo').onclick = async () => {
-  const code = $('codeIn').value.trim();
+  const code = $('codeIn').value.trim().replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
   if (code.length < 6) return status('کد ۶ رقمیه.');
   status('مرحله ۱ از ۳: اتصال به سرور واسط…');
   if (!(await window.peerReady)) return status('کتابخانه‌ی اتصال لود نشد. اینترنت یا VPN رو چک کن و صفحه رو رفرش کن.');
@@ -204,11 +205,12 @@ $('btnGo').onclick = async () => {
   peer = new Peer(undefined, ICE);
   const t = setTimeout(() => status(stage === 1
     ? 'به سرور واسط وصل نشد (احتمالاً فیلتره). VPN رو روشن کن.'
-    : 'دوستت پیدا شد ولی اتصال مستقیم بین دو گوشی برقرار نشد (مشکل شبکه/فیلتر).'), 20000);
+    : 'دوستت پیدا شد ولی اتصال مستقیم بین دو گوشی برقرار نشد (مشکل شبکه/فیلتر). خط انگلیسی زیر رو برام بفرست.'), 30000);
   peer.on('open', () => {
     stage = 2; status('مرحله ۲ از ۳: پیدا کردن دوستت…');
     conn = peer.connect(PREFIX + code, {reliable:true});
     conn.on('open', () => clearTimeout(t));
+    watchIce(conn);
     bind();
   });
   peer.on('error', e => {
@@ -217,8 +219,18 @@ $('btnGo').onclick = async () => {
   });
 };
 
+function watchIce(c){
+  const seen = new Set();
+  (function go(){
+    const pc = c.peerConnection; if (!pc) return setTimeout(go, 150);
+    const dbg = () => $('dbg').textContent = 'ICE: ' + pc.iceConnectionState + ' | candidates: ' + ([...seen].join(',') || 'none');
+    pc.addEventListener('icecandidate', e => { const m = e.candidate && / typ (\w+)/.exec(e.candidate.candidate); if (m){ seen.add(m[1]); dbg(); } });
+    pc.addEventListener('iceconnectionstatechange', dbg); dbg();
+  })();
+}
+
 function bind(){
-  conn.on('open', () => { status(''); show('player'); $('player').style.display = 'flex'; render(); });
+  conn.on('open', () => { status(''); $('dbg').textContent = ''; show('player'); $('player').style.display = 'flex'; render(); });
   conn.on('error', e => status('خطا: ' + e.type));
   conn.on('data', onData);
   conn.on('close', () => { status('ارتباط قطع شد.'); a.pause(); });
