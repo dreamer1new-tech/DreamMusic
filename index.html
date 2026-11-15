@@ -120,6 +120,7 @@ svg{width:26px;height:26px;fill:currentColor}
     <div class="hd"><span>پلی‌لیست مشترک</span><small class="chip" id="cnt"></small></div>
     <ul id="list"></ul>
     <button class="main" id="btnAdd">＋ افزودن آهنگ از گوشی من</button>
+    <div class="chip">برای انتخاب چند آهنگ: انگشتت رو روی اولین آهنگ نگه دار تا انتخاب‌گر فعال بشه، بعد بقیه رو لمس کن و «انتخاب» رو بزن.</div>
     <input type="file" id="files" accept="audio/*" multiple class="hidden">
   </div>
   <audio id="a" preload="auto"></audio>
@@ -238,15 +239,24 @@ function bind(){
 
 /* ---------- آهنگ‌ها ---------- */
 $('btnAdd').onclick = () => $('files').click();
-$('files').onchange = e => {
-  for (const f of e.target.files){
+$('files').onchange = e => addFiles(e.target.files);
+['dragover','drop'].forEach(ev => document.addEventListener(ev, e => {
+  e.preventDefault();
+  if (ev === 'drop' && !$('player').classList.contains('hidden')) addFiles(e.dataTransfer.files);
+}));
+function addFiles(list){
+  let c = 0;
+  for (const f of list){
+    if (f.type && !f.type.startsWith('audio/')) continue;
     const id = me() + (n++);
     localFiles.set(id, f);
     blobUrls.set(id, URL.createObjectURL(f));
     tracks.push({id, name: f.name.replace(/\.[^.]+$/, ''), owner: me()});
+    c++;
   }
-  e.target.value = '';
+  $('files').value = '';
   render();
+  status(c + ' آهنگ اضافه شد ✓'); setTimeout(() => { if ($('status').textContent.includes('✓')) status(''); }, 2500);
   send({type:'tracks', list: tracks.filter(t => t.owner === me())});
 };
 
